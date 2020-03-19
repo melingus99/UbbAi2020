@@ -1,0 +1,49 @@
+
+
+class Controller:
+    def __init__(self,value):
+        self.problem=Problem(value)
+        
+    def Greedy(self):
+        state=self.problem.initialState
+        validStates=[1]
+        listScores=[]
+        maxScore=-1
+        listMaxScores=[]
+        #if problem is not solved and can still be solved go a State deeper
+        while(self.problem.stateScore(state)<len(state.value) and len(validStates)!=0):
+            validStates=self.problem.expand(state)
+            if(len(validStates)==0):
+                continue
+            for i in range(0,len(validStates)):
+                listScores.append(self.problem.heuristic(state,validStates[i]))
+            maxScore=max(listScores)
+            for i in range(0,len(listScores)):
+                if(listScores[i]==maxScore):
+                    listMaxScores.append(i)
+            idx=np.random.randint(0,len(listMaxScores))
+            state=validStates[idx]
+            listScores=[]
+            listMaxScores=[]
+        self.problem.setFinalState(state)
+        if(self.problem.stateScore(state)==len(state.value) and self.problem.checkValid(state)==True):
+            return True,state.value
+        return False,state.value
+            
+            
+            
+    def DFSRecursive(self,state):
+        if(self.problem.stateScore(state)==len(state.value) and self.problem.checkValid(state)==True):
+            return True,state
+        validStates=self.problem.expand(state)
+        for i in range(0,len(validStates)):
+            res,state=self.DFSRecursive(validStates[i])
+            if(res==True):
+                return res,state
+        return False,state
+        
+    
+    def DFS(self):
+        state=self.problem.initialState
+        res,state=self.DFSRecursive(state)
+        return state.value
