@@ -21,11 +21,12 @@ class EulerSquareUi(object):
         self.threadpool = QThreadPool()
         self.controller=1
         Form.setObjectName("Form")
-        Form.resize(1061, 507)
+        Form.resize(1144, 554)
+
         self.eulerSquareMethodsList = QtWidgets.QListView(Form)
         self.eulerSquareMethodsList.setGeometry(QtCore.QRect(20, 30, 111, 192))
         self.eulerSquareMethodsList.setObjectName("eulerSquareMethodsList")
-        entries = ['HillClimbing','Evolutionary algorithm','Particle Swarm Optimisation']
+        entries = ['HillClimbing','Evolutionary algorithm','Particle Swarm Optimisation',"Ant Colony Optimisation"]
 
         model = QtGui.QStandardItemModel()
         self.eulerSquareMethodsList.setModel(model)
@@ -103,8 +104,13 @@ class EulerSquareUi(object):
         self.optionalLabel.setObjectName("optionalLabel")
 
         self.bestSolutionView = QtWidgets.QListView(Form)
-        self.bestSolutionView.setGeometry(QtCore.QRect(700, 140, 311, 251))
+        self.bestSolutionView.setGeometry(QtCore.QRect(740, 200, 311, 251))
         self.bestSolutionView.setObjectName("bestSolutionView")
+        
+        self.stopButton = QtWidgets.QPushButton(Form)
+        self.stopButton.setGeometry(QtCore.QRect(840, 460, 93, 28))
+        self.stopButton.setObjectName("stopButton")
+        self.stopButton.clicked.connect(self.stopButtonClicked)
 
 
         self.solutionModel=QtGui.QStandardItemModel()
@@ -112,7 +118,7 @@ class EulerSquareUi(object):
 
 
         self.bestSolutionLabel = QtWidgets.QLabel(Form)
-        self.bestSolutionLabel.setGeometry(QtCore.QRect(770, 70, 161, 31))
+        self.bestSolutionLabel.setGeometry(QtCore.QRect(810, 150, 161, 31))
         self.bestSolutionLabel.setObjectName("bestSolutionLabel")
 
         self.psoParametersLabel = QtWidgets.QLabel(Form)
@@ -166,6 +172,59 @@ class EulerSquareUi(object):
         self.IterationsPSOEdit = QtWidgets.QLineEdit(Form)
         self.IterationsPSOEdit.setGeometry(QtCore.QRect(540, 390, 113, 22))
         self.IterationsPSOEdit.setObjectName("IterationsPSOEdit")
+
+        self.AcoLabel = QtWidgets.QLabel(Form)
+        self.AcoLabel.setGeometry(QtCore.QRect(500, 10, 131, 16))
+        self.AcoLabel.setObjectName("AcoLabel")
+
+        self.NoEpoch = QtWidgets.QLabel(Form)
+        self.NoEpoch.setGeometry(QtCore.QRect(400, 30, 111, 16))
+        self.NoEpoch.setObjectName("NoEpoch")
+
+        self.AntLabel = QtWidgets.QLabel(Form)
+        self.AntLabel.setGeometry(QtCore.QRect(400, 70, 101, 16))
+        self.AntLabel.setObjectName("AntLabel")
+
+        self.alphaLabel = QtWidgets.QLabel(Form)
+        self.alphaLabel.setGeometry(QtCore.QRect(400, 120, 55, 16))
+        self.alphaLabel.setObjectName("alphaLabel")
+
+        self.betaLabel = QtWidgets.QLabel(Form)
+        self.betaLabel.setGeometry(QtCore.QRect(630, 30, 31, 16))
+        self.betaLabel.setObjectName("betaLabel")
+
+        self.rhoLabel = QtWidgets.QLabel(Form)
+        self.rhoLabel.setGeometry(QtCore.QRect(630, 70, 31, 16))
+        self.rhoLabel.setObjectName("rhoLabel")
+
+        self.q0Label = QtWidgets.QLabel(Form)
+        self.q0Label.setGeometry(QtCore.QRect(630, 120, 21, 16))
+        self.q0Label.setObjectName("q0Label")
+
+        self.NoEpochEdit = QtWidgets.QLineEdit(Form)
+        self.NoEpochEdit.setGeometry(QtCore.QRect(510, 30, 113, 22))
+        self.NoEpochEdit.setObjectName("NoEpochEdit")
+
+        self.NoAntsEdit = QtWidgets.QLineEdit(Form)
+        self.NoAntsEdit.setGeometry(QtCore.QRect(510, 70, 113, 22))
+        self.NoAntsEdit.setObjectName("NoAntsEdit")
+
+        self.alphaEdit = QtWidgets.QLineEdit(Form)
+        self.alphaEdit.setGeometry(QtCore.QRect(510, 120, 113, 22))
+        self.alphaEdit.setObjectName("alphaEdit")
+
+        self.betaEdit = QtWidgets.QLineEdit(Form)
+        self.betaEdit.setGeometry(QtCore.QRect(660, 30, 113, 22))
+        self.betaEdit.setObjectName("betaEdit")
+
+        self.rhoEdit = QtWidgets.QLineEdit(Form)
+        self.rhoEdit.setGeometry(QtCore.QRect(660, 70, 113, 22))
+        self.rhoEdit.setObjectName("rhoEdit")
+
+        self.q0Edit = QtWidgets.QLineEdit(Form)
+        self.q0Edit.setGeometry(QtCore.QRect(660, 120, 113, 22))
+        self.q0Edit.setObjectName("q0Edit")
+
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -190,6 +249,14 @@ class EulerSquareUi(object):
         self.wLabel.setText(_translate("Form", "w:"))
         self.neighborhoodLabel.setText(_translate("Form", "neighborhood Size:"))
         self.iterationLabel.setText(_translate("Form", "Number of Iterations:"))
+        self.stopButton.setText(_translate("Form","Stop"))
+        self.AcoLabel.setText(_translate("Form", "parameters for ACO:"))
+        self.NoEpoch.setText(_translate("Form", "Number of Epoch:"))
+        self.AntLabel.setText(_translate("Form", "Number of Ants:"))
+        self.alphaLabel.setText(_translate("Form", "Alpha:"))
+        self.betaLabel.setText(_translate("Form", "Beta:"))
+        self.rhoLabel.setText(_translate("Form", "Rho:"))
+        self.q0Label.setText(_translate("Form", "Q0:"))
 
     def makePopulationEA(self,pop,n,firstSet,secondSet):
         population=[]
@@ -237,32 +304,47 @@ class EulerSquareUi(object):
             neighborhoodSize=int(self.neighborhoodPSOEdit.text())
             iterations=int(self.IterationsPSOEdit.text())
             init=self.makePopulationPSO(population,size,firstSet,secondSet)
-
-
+        elif(itm==3):
+            noEpoch=int(self.NoEpochEdit.text())
+            noAnts=int(self.NoAntsEdit.text())
+            alpha=float(self.alphaEdit.text())
+            beta=float(self.betaEdit.text())
+            rho=float(self.rhoEdit.text())
+            q0=float(self.q0Edit.text())
+            init=[]
 
         problem=EulerSquare(init,firstSet,secondSet)
         self.controller=Controller(problem)
 
 
         if(itm==0):
-            worker=Worker(self.controller.HillClimbing,self.populateView,2)
-            self.threadpool.start(worker)
+            self.worker=Worker(self.controller.HillClimbing,self.populateView,2)
+            self.threadpool.start(self.worker)
         elif(itm==1):
-            worker=Worker(self.controller.EA,self.populateView,2,population,PMutation,PCrossover,generations)
-            self.threadpool.start(worker)
+            self.worker=Worker(self.controller.EA,self.populateView,2,population,PMutation,PCrossover,generations)
+            self.threadpool.start(self.worker)
         elif(itm==2):
-            worker=Worker(self.controller.PSO,self.populateView,2,neighborhoodSize,c1,c2,w,iterations)
-            self.threadpool.start(worker)
+            self.worker=Worker(self.controller.PSO,self.populateView,2,neighborhoodSize,c1,c2,w,iterations)
+            self.threadpool.start(self.worker)
+        elif(itm==3):
+            self.worker=Worker(self.controller.ACO,self.populateView,2,noEpoch,noAnts,alpha,beta,rho,q0)
+            self.threadpool.start(self.worker)
+            
+    def stopButtonClicked(self):
+        self.worker.stop()
+        self.threadpool.clear()
 
 
 
-    def populateView(self,res,matrix,score):
+    def populateView(self,res,matrix,score,iteration):
         if(res==True):
             itemSucces = QtGui.QStandardItem("Finished")
         else:
             itemSucces=QtGui.QStandardItem("Not Finished Yet")
         self.solutionModel.clear()
         self.solutionModel.appendRow(itemSucces)
+        itemIteration=QtGui.QStandardItem("Iteration:"+str(iteration))
+        self.solutionModel.appendRow(itemIteration)
         itemScore=QtGui.QStandardItem("score: "+"-"+str(score))
         self.solutionModel.appendRow(itemScore)
         for i in range(0,len(matrix)):
@@ -271,6 +353,7 @@ class EulerSquareUi(object):
                 line+="("+str(matrix[i][j][0])+","+str(matrix[i][j][1])+")"+" "
             itemLine=QtGui.QStandardItem(line)
             self.solutionModel.appendRow(itemLine)
+            
 
     def show(self):
         Form = QtWidgets.QWidget()

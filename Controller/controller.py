@@ -7,7 +7,7 @@ import numpy as np
 import random as rand
 from domain.State import State
 from PyQt5.QtCore import QRunnable, pyqtSlot
-
+from domain.Ant import ant
 
 class Controller():
     def __init__(self,problem):
@@ -66,8 +66,8 @@ class Controller():
         scoreState=self.problem.fitness(state.value)
         while(scoreState!=0):
             scoreState=self.problem.fitness(state.value)
-            if(k%25==0):
-                yield False,state.value,scoreState
+            if(k%100==0):
+                yield False,state.value,scoreState,k
             validStates=self.problem.expand(state)
             for i in range(0,len(validStates)):
                 Scores.append(self.problem.fitness(validStates[i].value))
@@ -78,11 +78,12 @@ class Controller():
             if(minScore<scoreState):
                 state=deepcopy(validStates[idxScore])
             else:
-                state=self.problem.mutate(state)
+                state=self.problem.reinitialize(state.value)
+                #state=self.problem.mutate(state.value)
             Scores=[]
             minScore=math.inf
             k+=1
-        yield True,state.value
+        yield True,state.value,scoreState,k
     
     def EA(self,population,PMutate,PCrossover,maxGeneration):
         generation=self.problem.initialState
@@ -92,8 +93,9 @@ class Controller():
         bestScoreState=self.problem.fitness(generation.value[0])
         
         while(kGeneration<maxGeneration and bestScoreState!=0):
-            if kGeneration%25==0:
-                yield False,generation.value[0],bestScoreState
+            if kGeneration%50==0:
+                yield False,generation.value[0],bestScoreState,kGeneration
+                
             randCrossover=rand.random()
             randMutate=rand.random()
             newGeneration=deepcopy(generation)
@@ -116,7 +118,7 @@ class Controller():
             generation.value.sort(key=self.problem.fitness)
             bestScoreState=self.problem.fitness(generation.value[0])
 
-        yield True,generation.value[0],bestScoreState
+        yield True,generation.value[0],bestScoreState,kGeneration
 
 
     def PSO(self,neighborhoodSize, c1, c2, w,iterations):
@@ -135,7 +137,7 @@ class Controller():
 
         while(k<iterations and bestScoreParticle!=0):
             if(k%20==0):
-                yield False,population[best].position,population[best].value
+                yield False,population[best].position,population[best].value,k
 
             bestNeighbors=[]
             for i in range(len(population)):
@@ -157,11 +159,14 @@ class Controller():
                 population[i].setPosition(newPosition)
                 #population[i].position=deepcopy(newPosition)
 
+            '''
+            reinitialization
             if(k%10==0):
                 for i in range(0,len(population)):
                     randomDude=rand.randint(0,len(population)-1)
-                    population[randomDude]=self.problem.reinitialize()
+                    population[randomDude]=self.problem.reinitializeParticle()
                     neighbors=self.problem.selectNeighbors(neighborhoodSize)
+            '''
 
             k+=1
             #w=w-0.0001
@@ -171,8 +176,51 @@ class Controller():
                     best = i
             bestScoreParticle=population[best].value
 
-        yield True,population[best].position,population[best].value
+        yield True,population[best].position,population[best].value,k
 
-        
+    def epoca(self,trace,noAnts,alpha,beta,rho,q0):
+        n=len(self.problem.S)
+        firstSet=self.problem.S
+        secondSet=self.problem.T
+        antSet=[ant(n, firstSet,secondSet) for i in range(noAnts)]
+        for i in range(0,n*n):
+            for x in antSet:
+                x.addMove(q0, trace, alpha, beta,i)
+
+        dTrace=[ 1.0 / antSet[i].fitness(antSet[i].path) for i in range(len(antSet))]
+        for i in range(n):
+            for j in range (n):
+                for k in range(n*n):
+                    trace[i][j][k] = (1 - rho) * trace[i][j][k]
+
+        for i in range(len(antSet)):
+            x = antSet[i].path
+            for k in range(len(x)):
+                for l in range(len(x)):
+                    if(x[k][l][0]!=-1 and x[k][l][1]!=-1):
+                        pos0=firstSet.index(x[k][l][0])
+                        pos1=secondSet.index(x[k][l][1])
+                        trace[k][l][pos0*n+pos1]+=dTrace[i]
+        f=[ [antSet[i].fitness(antSet[i].path), i] for i in range(len(antSet))]
+        f=min(f, key=lambda a: a[0])
+        return antSet[f[1]].path,antSet[f[1]].fitness(antSet[f[1]].path)
+
+    def ACO(self,noEpoch,noAnts,alpha,beta,rho,q0):
+        bestSol=[]
+        bestScore=math.inf
+        succes=False
+        n=len(self.problem.S)
+        trace=[[[1 for i in range(n*n)] for j in range(n)] for k in range (n)]
+        for i in range(noEpoch):
+            sol,score=self.epoca(trace,noAnts,alpha,beta,rho,q0)
+            if score<bestScore:
+                bestSol=sol.copy()
+                bestScore=score
+            if(bestScore==1):
+                succes=True
+                break
+            if(i%25==0):
+                yield succes,bestSol,bestScore,i
+        yield True,bestSol,bestScore,noEpoch
     
     

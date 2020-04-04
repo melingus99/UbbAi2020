@@ -13,7 +13,20 @@ class EulerSquare(Problem):
         self.T=T
         self.finalState=1
 
-
+    def expand(self,state):
+        listStates=[]
+        for i in range(0,len(state.value)):
+            for j in range(0,len(state.value[i])):
+                for k in range(0,len(self.S)):
+                    k1=state.value[i][j][0]
+                    k2=state.value[i][j][1]
+                    state.value[i][j][0]=self.S[k]
+                    state.value[i][j][1]=self.T[k]
+                    listStates.append(deepcopy(state))
+                    state.value[i][j][0]=k1
+                    state.value[i][j][1]=k2
+        return listStates
+    
     def setCurrentState(self,state):
         self.currentState=deepcopy(state)
 
@@ -72,8 +85,19 @@ class EulerSquare(Problem):
                 newPosition[randi][randj]=bestNeighborPosition[randi][randj]
         return newPosition
 
-    def reinitialize(self):
+    def reinitializeParticle(self):
         return particle(len(self.S),self.S,self.T)
+    
+    def reinitialize(self,state):
+        init=[]
+        size=len(state)
+        for i in range(0,size):
+            init.append([])
+            for j in range(0,size):
+                first=rnd.randint(0,size-1)
+                second=rnd.randint(0,size-1)
+                init[i].append([self.S[first],self.T[second]])
+        return State(init)
 
     def selectNeighbors(self, nSize):
         pop=self.currentState.value
