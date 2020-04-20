@@ -8,8 +8,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from View.LatinSquareUi import LatinSquareUi
-from View.EulerSquareUI import EulerSquareUi
+from Lab2to5.View.LatinSquareUi import LatinSquareUi
+from Lab2to5.View.EulerSquareUI import EulerSquareUi
 class UiMainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")

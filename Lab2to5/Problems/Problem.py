@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from domain.State import State
-
 class Problem:
     def __init__(self,value):
         pass

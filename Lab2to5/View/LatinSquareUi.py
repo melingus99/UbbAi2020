@@ -6,15 +6,11 @@
 #
 # WARNING! All changes made in this file will be los
 
-import concurrent.futures
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QRunnable, pyqtSlot
-from View.Worker import Worker
-from Controller.controller import Controller
-from Problems.LatinSquare import LatinSquare
+from Lab2to5.View.Worker import Worker
+from Lab2to5.Controller.controller import Controller
+from Lab2to5.Problems.LatinSquare import LatinSquare
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 class LatinSquareUi(object):
     def setupUi(self, Form):

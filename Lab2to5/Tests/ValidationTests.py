@@ -3,9 +3,9 @@ import random as rand
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Controller.controller import Controller
-from Problems.EulerSquare import EulerSquare
-from domain.Particle import particle
+from Lab2to5.Controller.controller import Controller
+from Lab2to5.Problems.EulerSquare import EulerSquare
+from Lab2to5.domain.Particle import particle
 
 
 class ValidationTestsEA():

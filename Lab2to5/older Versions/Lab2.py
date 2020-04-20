@@ -14,10 +14,8 @@ import random as rnd
 from copy import deepcopy
 
 from domain.Particle import particle
-from domain.State import State
-    
-    
-    
+
+
 class Ui:
     def __init__(self):
         self.controller=1

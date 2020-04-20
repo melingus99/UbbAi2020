@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from View.UI import GUI
+from Lab2to5.View.UI import GUI
 
 
 gui=GUI()

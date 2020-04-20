@@ -1,5 +1,5 @@
-from domain.State import State
-from Problems.Problem import Problem
+from Lab2to5.domain.State import State
+from Lab2to5.Problems.Problem import Problem
 import numpy as np
 
 import copy

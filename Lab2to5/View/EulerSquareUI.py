@@ -9,13 +9,14 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QThreadPool
-from View.Worker import Worker
-from Controller.controller import Controller
-from Problems.EulerSquare import EulerSquare
+from Lab2to5.View.Worker import Worker
+from Lab2to5.Controller.controller import Controller
+from Lab2to5.Problems.EulerSquare import EulerSquare
 import random as rand
 import copy
-from domain.Particle import particle
-from domain.State import State
+from Lab2to5.domain.Particle import particle
+
+
 class EulerSquareUi(object):
     def setupUi(self, Form):
         self.threadpool = QThreadPool()

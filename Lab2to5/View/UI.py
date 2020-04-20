@@ -6,7 +6,7 @@ Created on Tue Mar 10 16:28:56 2020
 """
 
 
-from View.testUi import UiMainWindow
+from Lab2to5.View.testUi import UiMainWindow
 
 
 class GUI():

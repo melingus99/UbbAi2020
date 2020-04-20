@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from domain.Particle import particle
-from domain.State import State
-from Problems.Problem import Problem
+from Lab2to5.domain.Particle import particle
+from Lab2to5.domain.State import State
+from Lab2to5.Problems.Problem import Problem
 from copy import deepcopy
-import numpy as np
 import random as rnd
 class EulerSquare(Problem):
     def __init__(self,value,S,T):

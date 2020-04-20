@@ -1,13 +1,9 @@
-from Problems.Problem import Problem
-from Problems.LatinSquare import LatinSquare
-from Problems.EulerSquare import EulerSquare
 from copy import deepcopy
 import math
 import numpy as np
 import random as rand
-from domain.State import State
-from PyQt5.QtCore import QRunnable, pyqtSlot
-from domain.Ant import ant
+from Lab2to5.domain.State import State
+from Lab2to5.domain.Ant import ant
 
 class Controller():
     def __init__(self,problem):
