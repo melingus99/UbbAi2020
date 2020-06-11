@@ -50,9 +50,9 @@ class NeuralNetwork():
         grad2 = np.zeros((self.theta2.shape))
 
         for i in range(m):
-            xi= self.X[i,:] # 1 X 401
-            a1i = a1[i,:] # 1 X 26
-            a2i =a2[i,:] # 1 X 10
+            xi= self.X[i,:]
+            a1i = a1[i,:]
+            a2i =a2[i,:]
             d2 = (a2i - self.Y[i,:])*self.alpha
             d1 = self.theta2.T @ d2.T *self.alpha
             grad1= grad1 + d1[1:][:,np.newaxis] @ xi[:,np.newaxis].T

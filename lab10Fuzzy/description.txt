@@ -1,0 +1,106 @@
+I have chosen to solve the second problem(the furnace one) with the help of the skfuzzy library which uses the Mamdani model.
+
+On initialization, the repository reads and process the data from the files 'problem.in' and 'input.in'. The former has this structure:
+'''
+lowest temperature boundary, highest temperature boundary
+lowest capacity boundary highest capacity boundary
+lowest capacity boundary highest power boundary
+the points for Cold temperature
+the points for Cool temperature
+the points for Moderate temperature
+the points for Hot temperature
+the points for Very Hot temperature
+the points for Small capacity
+the points for Medium capacity
+the points for High capacity
+the points for Small power
+the points for Medium power
+the points for High power
+'''
+And the latter has this structure:
+'''
+temperature1 capacity1
+temperature2 capacity2
+etc.
+'''
+
+After reading and processing it sets up the rules and the Fuzzy variable which has the temperature, capacity as Antecedent classes
+and power as a Consequent class. Both classes from the controller module from skfuzzy. Temperature with membership functions labeled as
+ 'Cold','Cool','Moderate','Hot','VeryHot' and capacity and power with  membership functions labeled as 'Small','Medium','High'.
+ 'Cold' and 'VeryHot' have trapezoidal membership function while the rest have triangular.
+
+ The rules are classes from controller module.Given the table with rules i decided to reduce the number of rules getting 3 rules, one for each set
+ of the power variable. These are the rules:
+ '''
+ rule1: If (temperature is cold and capacity is medium) or (temperature is cool and capacity is medium) ->power is medium
+
+ rule2: If (temperature is cold and capacity is high) or (temperature is cool and capacity is high) -> power is high
+
+ rule3: If (capacity is small) or (capacity is medium and temperature is not cold and temperature is not cool) or
+	(capacity is high and temperature is not cold and temperature is not cool) -> power is small
+ '''
+
+the validation for temperature=30 and capacity=10:
+
+r1:If (temperature is cold and capacity is medium) or (temperature is cool and capacity is medium) -> power is medium
+
+    For the cold set The form is trapezoidal so we apply the trapezoidal membership function which is:
+
+    trapmf(cold)=max(0,min((x-a)/(b-a),1,(d-x)/(d-c)))=1
+    with: a=b=20,c=30,d=50 and x=30
+
+    For the medium set The form is triangular so we apply the triangular membership function which is:
+
+    trimf(medium)=max(0,min((x-a)/(b-a),1,(c-x)/(c-b)))=0
+    with: a=3,b=5,c=7 and x=10
+
+    We now apply the 'and' operator between trapmf(cold) and trimf(medium)=0
+
+    For the cool set The form is triangular so we apply the triangular membership function which is:
+
+    trimf(cool)=max(0,min((x-a)/(b-a),1,(c-x)/(c-b)))=0
+    with: a=30 b=50,c=70 and x=30
+
+    We now apply the 'and' operator between trimf(cool) and trimf(medium)=0
+
+    We now apply the 'or' operator=0
+
+r2:If (temperature is cold and capacity is high) or (temperature is cool and capacity is high) -> power is high
+
+    For the high set The form is triangular so we apply the triangular membership function which is:
+
+    trimf(high)=max(0,min((x-a)/(b-a),1,(c-x)/(c-b)))=1
+    with: a=5,b=c=10 and x=10
+
+    We now apply the 'and' operator between trapmf(cold) and trimf(high)=1
+
+    We now apply the 'and' operator between trimf(cool) and trimf(high)=0
+
+    We now apply the 'or' operator=1
+
+r3: If (capacity is small) or (capacity is medium and temperature is not cold and temperature is not cool) or
+	(capacity is high and temperature is not cold and temperature is not cool) -> power is small
+
+	For the small set The form is triangular so we apply the triangular membership function which is:
+
+    trimf(small)=max(0,min((x-a)/(b-a),1,(c-x)/(c-b)))=0
+    with: a=b=0, c=5 and x=10
+
+    For the temperature is not cold we shall use the complement: 1-trapmf(cold)=0
+
+    For the temperature is not cool we shall use the complement: 1-trimf(cool)=1
+
+    We now apply the 'and' operator between trimf(medium), ~trapmf(cold) and ~trimf(cool)=0
+
+    We now apply the 'and' operator between trimf(high), ~trapmf(cold) and ~trimf(cool)=0
+
+    We now apply the 'or' operator=0
+
+Defuzzification with COA=10*0+11*.1+12*.2+13*.3+14*.4+15*.5+16*.6+17*.7+18*.8+19*.9+20*1/0+.1+.2+.3+.4+.5+.6+.7+.8+.9+1=12.15
+-Skfuzzy calcultes COA different
+
+
+
+
+
+
